@@ -11,52 +11,93 @@ def exercice2b(A):
 
 def exercice2c(A):
     B = [0 for i in range(0, len(A))]
-    non_zero_indexes = []
-    negative_left_values = 0
-
-    # count negative_left_values
-    for i in range(0, len(A)):
-        if A[i] < 0:
-            negative_left_values += 1
+    indexes_of_non_zero = []
+    negative_right_values = 0
 
     # manage all the cases where A[i] = 0
-    for i in range(0, len(A)):
+    for i in range(len(A)-1, -1, -1):
         if A[i] == 0:
-            B[i] = negative_left_values
+            B[i] = negative_right_values
         if A[i] < 0:
-            negative_left_values -= 1
+            negative_right_values += 1
         if A[i] != 0:
-            non_zero_indexes.append(i)
+            indexes_of_non_zero.append(i)
 
     # manage the cases where A[i] != 0
-    for i in range(0, len(non_zero_indexes)):
+    while len(indexes_of_non_zero) > 0:
         count = 0
-        for j in range(non_zero_indexes[i] + 1, len(A)):
-            if A[j] < A[non_zero_indexes[i]]:
+        index = indexes_of_non_zero.pop()
+        for j in range(index + 1, len(A)):
+            if A[j] < A[index]:
                 count += 1
-        B[non_zero_indexes[i]] = count
+        B[index] = count
 
     return B
 
+
+def is_first_pair_minor(tuple1, tuple2):
+    if(tuple1[0] != tuple2[0]):
+        return tuple1[0] < tuple2[0]
+    else:
+        return tuple1[1] <= tuple2[1]
+
+
+def mergeSort(array):
+    if len(array) > 1:
+
+        arr = array
+
+        # Finding the mid of the array
+        mid = len(array) // 2
+        L = [0]*mid
+        R = [0]*(len(arr)-mid)
+        for i in range(0, len(arr)):
+            if(i<mid):
+                L[i] = arr[i]
+            else:
+                R[i-mid] = arr[i]
+
+
+        # Sorting the first half
+        mergeSort(L)
+
+        # Sorting the second half
+        mergeSort(R)
+
+        i = j = k = 0
+
+        # Copy data to temp arrays L[] and R[]
+        while i < len(L) and j < len(R):
+            if is_first_pair_minor(L[i], R[j]):
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        # Checking if any element was left
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+
 if __name__ == '__main__':
+    #'''
     A = [2, -7, 8, 3, -5, -5, 9, 1, 12, 4]
     B = exercice2b(A)
     print("B =", B)
+    #'''
 
+    '''
+    C = [(5, 2), (5, 1), (9, 1), (1, 4), (5, 1), (-7, 8),(2, 19), (9, 1)]
+    mergeSort(C)
+    print(C)
+    '''
 
-    print("----------------------")
-
-
-    A_zeros = [0, -7, 0, 1, 0, 0, 0, -3, 8, 0]
-    B_zeros = exercice2c(A_zeros)
-    print("B_zeros = ", B_zeros)
-
-
-
-
-'''
-B = [4, 0, 5, 3, 0, 0, 2, 0, 1, 0]
-----------------------
-B_zeros =  [2, 0, 1, 5, 1, 1, 1, 0, 1, 0]
-
-'''
